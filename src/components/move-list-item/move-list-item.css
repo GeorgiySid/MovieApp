@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.movie-item {
+  width: 451px;
+  height: 280px;
+  margin-top: 25px;
+  margin-left: 25px;
+  margin-right: 25px;
+  position: relative;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+}
+
+.list-group {
+  list-style: none;
+  position: absolute;
+  top: -10px;
+  right: 10px;
+}
+
+.movie-poster {
+  width: 183px;
+  height: 280px;
+}
+
+
+.list-group-item {
+  margin-bottom: 5px;
+}
+
+.movie-title {
+  font-weight: 600;
+  font-size: 20px;
+  width: 220px;
+}
+
+.movie-description {
+  width: 228px;
+  height: 129px;
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.movie-date {
+  color: rgba(130, 126, 126, 1);
+}
+
+.ant-rate {
+  position: absolute;
+  font-size: 16px;
+  top:260px;
+  left: 200px;
+}
+.vote_average span{
+  font-size: 12px;
+}
+.vote_average{
+  position: absolute;
+  top:0;
+  right: -5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.vote_average--low{
+  border: 1px solid #E90000;
+}
+
+.vote_average--medium{
+  border: 1px solid #E97E00;
+}
+
+.vote_average--hight{
+  border: 1px solid #E9D100;
+}
+
+.vote_average--max{
+  border: 1px solid #66E900;
+}
+
+.movie-genre__list{
+  padding: 0;
+  display: flex;
+  width: 250px;
+  flex-wrap: wrap;
+}
+
+.movie-genre__item{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  min-width: 46px;
+  min-height: 20px;
+  font-size: 12px;
+  list-style: none;
+  color:rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(217, 217, 217, 1);
+  background: rgba(250, 250, 250, 1);
+
+}
+
+@media screen and (max-width: 767.9px){
+  .movie-item{
+    width:388px ;
+    height: 245px;
+  }
+  .movie-poster{
+    width: 60px;
+    height: 91px;
+    padding: 10px;
+  }
+  .movie-date{
+    font-size: 12px;
+  }
+  .movie-description{
+    font-size: 12px;
+    width: 315px;
+    position: absolute;
+    top:100px;
+    left: -30px;
+  }
+  .ant-rate{
+    width: 239px;
+    font-size: 16px;
+    top:210px;
+    left: 95px;
+  }
+  .list-group{
+    top:-5px;
+    left:38px;
+  }
+  .movie-title{
+    width: 225px;
+  }
+  .movie-genre__list{
+    width: 260px;
+  }
+  .vote_average{
+    top:-7px;
+  }
+}

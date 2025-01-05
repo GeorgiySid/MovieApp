@@ -1,0 +1,20 @@
+
+.search {
+    display: flex;
+    justify-content: center;
+    width: 1010px;
+}
+
+.search input {
+    width: 940px;
+    height: 40px;
+    margin-top: 20px;
+}
+@media screen and (max-width: 767.9px){
+    .search{
+        width: 388px;
+    }
+    .search input{
+        width: 360px;
+    }
+}
