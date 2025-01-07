@@ -1,1 +1,1 @@
-<a href="https://vercel.com/georgiysids-projects/movie-app">Ссылка на MovieApp</a>
+<a href="https://movie-app-rho-sage.vercel.app">Ссылка на MovieApp</a>
