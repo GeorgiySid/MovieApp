@@ -21,6 +21,12 @@ export default class Tabs extends React.Component {
       genres: null,
       loadingGenres: true,
       errorGenres: null,
+      searchRes: {
+        results:[],
+        error: false,
+      },
+      searchQuery: '',
+      currentPage:1,
     }
     this.movieService = new MovieService()
   }
@@ -84,6 +90,19 @@ export default class Tabs extends React.Component {
     }))
   }
 
+  handleSearch = (res, query) => {
+    this.setState({
+      searchRes: res,
+      searchQuery: query,
+    })
+  }
+
+  handlePageChange = (page) => {
+    this.setState({
+      currentPage: page
+    })
+  }
+
   handleDeleteMovie = (movieId) => {
     this.setState((prevState) => {
       const { ratedMoviesLocal } = prevState
@@ -102,7 +121,7 @@ export default class Tabs extends React.Component {
   }
 
   render() {
-    const { activeTab, guestSessionId, ratedMovies, error, loadingRatedMovies, ratedMoviesLocal, genres } = this.state
+    const { activeTab, guestSessionId, ratedMovies, error, loadingRatedMovies, ratedMoviesLocal, genres, searchRes, searchQuery, currentPage } = this.state
     const spinnerRate = (
       <Flex className = "ant-spinner-rate" justify="center" align="center" style={{ height: '100%', width: '100%' }}>
         <Spin size="large" />
@@ -137,6 +156,12 @@ export default class Tabs extends React.Component {
               onRateMovie={this.handleRateMovie}
               genres={genres}
               onDeleteMovie={this.handleDeleteMovie}
+              onSearch={this.handleSearch}
+              searchRes={searchRes}
+              searchQuery={searchQuery}
+              currentPage={currentPage}
+              onPageChange={this.handlePageChange}
+              
             />
           ) : (
             <RatedMovieList
@@ -147,6 +172,7 @@ export default class Tabs extends React.Component {
               onRateMovie={this.handleRateMovie}
               genres={genres}
               onDeleteMovie={this.handleDeleteMovie}
+              onPageChange={this.handlePageChange}
             />
           )}
         </div>

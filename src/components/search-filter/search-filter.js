@@ -7,34 +7,54 @@ import MovieService from '../service/movie-service'
 export default class SearchFilter extends React.Component {
   movieService = new MovieService()
 
-  handleChange = debounce(async (value) => {
+  constructor(props) {
+    super(props)
+    this.state = {
+      value: props.searchQuery || '', 
+    }
+  }
 
-    if(!value) {
-      this.props.onSearch({ results: [], error: false})
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.searchQuery !== this.props.searchQuery) {
+      this.setState({ value: this.props.searchQuery })
+    }
+  }
+
+  handleChange = (evt) => {
+    const value = evt.target.value
+    this.setState({value})
+    this.handleSearch(value)
+  }
+
+  handleSearch = debounce(async (value) => {
+    if (!value) {
+      this.props.onSearch({ results: [], error: false }, value)
       return
     }
     try {
-      const data = await this.movieService.getFetch(value)
+      const data = await this.movieService.getFetch( `&query=${value}`)
       if (data.results.length === 0) {
-        this.props.onSearch({results: [], error: true})
+        this.props.onSearch({ results: [], error: true }, value)
         return
       }
-      this.props.onSearch({results: data.results, error: false})
-    }
-    catch(err){
-      this.props.onSearch({results: [], error: false})
+      this.props.onSearch({ results: data.results, error: false }, value)
+    } catch (err) {
+      this.props.onSearch({ results: [], error: false }, value)
       console.error('Error during search:', err)
     }
-
   }, 500)
+
 
   render() {
     return (
       <div className="search">
-        <input 
-          type='text'
+        <input
+          type="text"
           placeholder="search movie"
-          onChange={(evt) => this.handleChange(evt.target.value)}  />
+          value={this.state.value}
+          onChange={this.handleChange}
+        />
       </div>
     )
   }

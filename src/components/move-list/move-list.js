@@ -8,6 +8,7 @@ import MovieService from '../service/movie-service'
 import SearchFilter from '../search-filter/search-filter'
 import PaginationMovie from '../pagination'
 
+
 export default class MovieList extends React.Component {
   movieService = new MovieService()
 
@@ -15,28 +16,18 @@ export default class MovieList extends React.Component {
     movies: [],
     loading: true,
     error: false,
-    searchRes: {
-      results: [],
-      error: false,
-    },
-    currentPage: 1,
     pageSize: 6,
   }
 
   handleSearch = (res) => {
     this.setState({
-      searchRes: res,
-      currentPage: 1,
+      movies: res.results, // Здесь обновляем состояние
+      loading: false,
     })
+    this.props.onSearch(res, document.querySelector('input[placeholder="search movie"]').value)
   }
-
   handlePageChange = (page) => {
-    this.setState(
-      {
-        currentPage: page,
-      },
-      () => this.fetchMovie(page)
-    )
+    this.props.onPageChange(page)
   }
 
   onError = () => {
@@ -45,15 +36,22 @@ export default class MovieList extends React.Component {
       loading: false,
     })
   }
-
   componentDidMount() {
-    this.fetchMovie()
+    this.fetchMovie(this.props.currentPage)
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.currentPage !== this.props.currentPage) {
+      this.fetchMovie(this.props.currentPage)
+    } else if (prevProps.searchQuery !== this.props.searchQuery) {
+      this.fetchMovie(this.props.currentPage)
+    }
   }
 
   fetchMovie = (page = 1) => {
     this.setState({ loading: true })
+    const query = this.props.searchQuery
     this.movieService
-      .getFetch(`&page=${page}`)
+      .getFetch(`${query && `&query=${query}`}&page=${page}`)
       .then((data) => {
         this.setState({
           movies: data.results,
@@ -62,6 +60,7 @@ export default class MovieList extends React.Component {
       })
       .catch(this.onError)
   }
+
 
   truncateText(text, maxLength) {
     if (!text || text.length <= maxLength) {
@@ -77,17 +76,14 @@ export default class MovieList extends React.Component {
     return truncate.substring(0, lastSpaceIndex) + '...'
   }
 
-  setRate = async (movieId, rating) => {
-    const { onRateChange } = this.props
-    if (onRateChange) {
-      onRateChange(movieId, rating)
-    }
-  }
-
   render() {
-    const { movies, loading, error, searchRes, currentPage, pageSize } = this.state
-    const { ratedMovies, setRate, guestSessionId,genres } = this.props
-    const allMovies = searchRes && searchRes.results && searchRes.results.length > 0 ? searchRes.results : movies
+    const { movies, loading, error,  pageSize } = this.state
+    const { ratedMovies, guestSessionId, genres, searchRes, currentPage, searchQuery } = this.props
+    const allMovies =
+          searchRes && searchRes.results && searchRes.results.length > 0
+            ? searchRes.results
+            : movies
+
 
     const startIndex = (currentPage - 1) * pageSize
     const endIndex = startIndex + pageSize
@@ -97,28 +93,27 @@ export default class MovieList extends React.Component {
     const searchError = searchRes && searchRes.error
 
     const spinner = loading ? (
-      <Flex className='ant-spinner-movieList' justify="center" align="center" style={{ height: '100%', width: '100%' }}>
+      <Flex className="ant-spinner-movieList" justify="center" align="center" style={{ height: '100%', width: '100%' }}>
         <Spin size="large" />
       </Flex>
     ) : null
 
     const content =
-      hasData && !searchError
-        ? currentMovies.map((movie) => (
-          <MovieListItem
-            key={movie.id}
-            movie={movie}
-            onTruncate={this.truncateText}
-            ratedMovies={ratedMovies}
-            setRate={(rating) => setRate(movie.id, rating)}
-            guestSessionId={guestSessionId}
-            ratedMoviesLocal={this.props.ratedMoviesLocal}
-            onRateMovie={this.props.onRateMovie}
-            genres={genres}
-            onDeleteMovie={this.props.onDeleteMovie}
-          />
-        ))
-        : []
+          hasData && !searchError
+            ? currentMovies.map((movie) => (
+              <MovieListItem
+                key={movie.id}
+                movie={movie}
+                onTruncate={this.truncateText}
+                ratedMovies={ratedMovies}
+                guestSessionId={guestSessionId}
+                ratedMoviesLocal={this.props.ratedMoviesLocal}
+                onRateMovie={this.props.onRateMovie}
+                genres={genres}
+                onDeleteMovie={this.props.onDeleteMovie}
+              />
+            ))
+            : []
 
     const errorMessage = error ? (
       <Alert message="Error" description="ERROR SRRY FOR ERROR" type="error" showIcon />
@@ -128,11 +123,11 @@ export default class MovieList extends React.Component {
     ) : null
     return (
       <div className="movie-list">
-        <SearchFilter onSearch={this.handleSearch} />
+        <SearchFilter onSearch={(res) => this.handleSearch(res, document.querySelector('input[placeholder="search movie"]').value)} searchQuery={searchQuery} />
         {searchErrorMessage}
         {errorMessage}
         {spinner}
-        <div style={{ width: '100%'}}></div>
+        <div style={{ width: '100%' }}></div>
         {content}
         {!searchError && hasData && (
           <PaginationMovie
